@@ -1,0 +1,38 @@
+{
+    "hostname": "foobar",
+    "motd": "Don't break stuff",
+    "sshd": ["PermitRootLogin no", "AuthenticationMethods pubkey", "PasswordAuthentication no"],
+    "groups": [
+        "admins"
+    ],
+    "users": { 
+        "torvalds": {
+            "user_dir": "/home/torvalds",
+            "user_gecos": "Linus Torvalds",
+            "user_shell": "/bin/bash",
+            "supp_groups": "admins",
+            "user_ssh": "https://github.com/torvalds.keys"
+        },
+        "griesemer": {
+            "user_dir": "/home/griesemer",
+            "user_gecos": "Robert Griesemer",
+            "user_shell": "/bin/bash",
+            "supp_groups": "admins",
+            "user_ssh": "https://github.com/griesemer.keys"
+        },
+        "ken": {
+            "user_dir": "/home/ken",
+            "user_gecos": "Ken Thompson",
+            "user_shell": "/bin/bash",
+            "supp_groups": "admins",
+            "user_ssh": "https://github.com/ken.keys"
+        }
+    },
+    "sudoers": ["%admins ALL=(ALL:ALL) NOPASSWD:ALL"],
+    "packages": ["htop", "tmux", "vim", "nano", "git", "rsync"],
+    "service": {
+        "httpd": {
+            "port": "1337"
+        }
+    }
+}

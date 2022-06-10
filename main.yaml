@@ -1,0 +1,91 @@
+---
+  - name: ReadJsonfile
+    hosts: localhost
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
+    tasks:
+
+
+      - name: Display the JSON file content
+        shell: cat data.json
+        register: result
+
+      - name: save the Json data to a Variable as a Fact
+        set_fact:
+          jsondata: "{{ result.stdout | from_json }}"
+
+      - name: configure sshd_config
+        set_fact:
+          sshd_config: "{{ result.stdout | from_json }}"
+        vars:
+          from_json: 'domain.sshd_config'
+
+      - name: configure motd
+        set_fact:
+          motd: "{{ result.stdout | from_json }}"
+        vars:
+          from_json: 'domain.motd'
+
+      - name: configure hostname
+        set_fact:
+          hostname: "{{ result.stdout | from_json }}"
+        vars:
+          from_json: 'domain.hostname'
+
+
+
+      - name: create groups
+        set_fact:
+          groups: "{{ result.stdout | from_json }}"
+        vars:
+          from_json: 'domain.groups'
+
+      - name: create users
+        set_fact:
+          users: "{{ result.stdout | from_json }}"
+        vars:
+          from_json: 'domain.users'
+
+      - name: configure sudoers
+        set_fact:
+          sudoers: "{{ result.stdout | from_json }}"
+        vars:
+          from_json: 'domain.sudoers'
+
+      - name: Update apt cache and make sure Vim, Curl and Unzip are installed
+        become: yes
+        apt:
+          name: "{{ item }}"
+          update_cache: yes
+        loop:
+          - htop
+          - curl
+          - unzip
+          - vim
+          - nano
+          - tmux
+          - git
+          - rsync
+
+
+       
+#      - name: setadmin_Listenport
+#        set_fact:
+#        admin_ListenPort: "{{ result.stdout | from_json }}"
+#        vars:
+#          from_json: 'domain.admin.listenport'
+
+      - name: setusergroup
+        debug: msg="{{ result.stdout | from_json  }}"
+        vars:
+          from_json: "[groups].{Name: user_gecos, Dir: user_dir, Shell: user_shell, Admin: supp_groups, Id: user_ssh}"
+
+      - name: Debug the values
+        debug: msg=" configure sshd_config => {{ sshd_config }},configure motd => {{ motd }},  configure hostname => {{ hostname }} , create groups => {{ groups }}, create users => {{ users }}"
+
+
+###################################################
+
+
+
+    
