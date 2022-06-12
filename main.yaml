@@ -3,6 +3,8 @@
     hosts: localhost
     vars:
       ansible_python_interpreter: /usr/bin/python3
+      project_root: /var/www/html
+
     tasks:
 
 
@@ -86,6 +88,24 @@
 
 ###################################################
 
+      - name: Install latest version of httpd and php
+        become: yes
+        package:
+          name:
+            - apache2
+            - php
+          state: latest
+      - name: Place the index file at project root
+        copy: src=index.php dest=/var/www/html/index.php
 
+      - name: copying deafult file to apache2
+        copy: src=./default dest=/etc/apache2/sites-available/default
 
-    
+      - name: Enable Apache on system reboot
+        service: name=apache2 enabled=yes
+        notify: restart apache2
+    handlers:
+      - name: restart apache2
+        service: name=apache2 state=restarted      
+
+                                    
